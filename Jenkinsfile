@@ -44,6 +44,17 @@ pipeline {
                 }
             }
         }
+        stage('Run sample application') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -B exec:java'
+                    } else {
+                        bat 'mvn -B exec:java'
+                    }
+                }
+            }
+        }
     }
 
     post {
