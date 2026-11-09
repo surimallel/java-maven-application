@@ -36,5 +36,8 @@ C (70+), D (60+), and F (below 60).
 ## Jenkins
 
 The root `Jenkinsfile` runs `mvn -B clean verify` and publishes the Surefire
-JUnit test reports. Configure the Jenkins agent with JDK 17+ and Maven 3.8+
-available on `PATH`, then create a Pipeline job pointing at this repository.
+JUnit test reports. In Jenkins, configure a JDK installation named `JDK17`
+(version 17 or newer) under **Manage Jenkins → Tools**. Ensure Maven 3.8+ is
+available on the agent's `PATH`, then create a Pipeline job pointing at this
+repository. The JDK tool setting makes Jenkins use the right compiler; without
+it, an older `javac` can report `release version 17 not supported`.
