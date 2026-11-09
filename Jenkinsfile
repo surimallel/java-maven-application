@@ -1,14 +1,22 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'JDK17'
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('Check Java') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'java -version && javac -version'
+                        sh 'javac --release 17 -version'
+                    } else {
+                        bat 'java -version && javac --release 17 -version'
+                    }
+                }
             }
         }
         stage('Build and test') {
