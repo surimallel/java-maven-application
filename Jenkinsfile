@@ -11,10 +11,24 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'java -version && javac -version'
-                        sh 'javac --release 17 -version'
+                        sh '''
+                            if ! command -v javac >/dev/null 2>&1; then
+                                echo "ERROR: javac is missing. Install a full JDK 17+ on this Jenkins agent and add its bin directory to PATH." >&2
+                                exit 1
+                            fi
+                            java -version
+                            javac --release 17 -version
+                        '''
                     } else {
-                        bat 'java -version && javac --release 17 -version'
+                        bat '''
+                            @where javac >nul 2>nul
+                            @if errorlevel 1 (
+                                echo ERROR: javac is missing. Install a full JDK 17+ on this Jenkins agent and add its bin directory to PATH. 1>&2
+                                exit /b 1
+                            )
+                            @java -version
+                            @javac --release 17 -version
+                        '''
                     }
                 }
             }

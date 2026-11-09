@@ -36,9 +36,8 @@ C (70+), D (60+), and F (below 60).
 ## Jenkins
 
 The root `Jenkinsfile` runs `mvn -B clean verify` and publishes the Surefire
-JUnit test reports. Ensure the Jenkins agent uses JDK 17 or newer for both
-`java` and `javac`, and has Maven 3.8+ on its `PATH`. The pipeline checks the
-Java compiler's Java 17 release support before building. Configure the agent's
-`JAVA_HOME` and `PATH` to use JDK 17 or newer; if using a Jenkins-managed JDK,
-select it in the agent configuration. The pipeline does not depend on a
-globally named Jenkins JDK tool installation.
+JUnit test reports. Ensure the Jenkins agent has a **full JDK 17 or newer**
+(not only a Java runtime/JRE) and Maven 3.8+ on its `PATH`. Set `JAVA_HOME` to
+the JDK installation and include its `bin` directory on `PATH`, so both
+`java` and `javac` are available. The pipeline checks for `javac` and Java 17
+release support before building and reports a setup error if either is missing.
