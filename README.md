@@ -35,10 +35,12 @@ C (70+), D (60+), and F (below 60).
 
 ## Jenkins
 
-The root `Jenkinsfile` runs `mvn -B clean verify` and publishes the Surefire
-JUnit test reports, then runs the sample application so its student report
-appears in the Jenkins job's **Console Output**. Ensure the Jenkins agent has a
-**full JDK 17 or newer**
+The root `Jenkinsfile` runs Maven's `clean`, `compile`, `test`, `package`, and
+`verify` goals in separate stages, publishes the Surefire JUnit test reports,
+then runs the sample application so its student report appears in the Jenkins
+job's **Console Output**. Maven lifecycle goals include all earlier phases, so
+the later stages repeat some earlier build work. Ensure the Jenkins agent has
+a **full JDK 17 or newer**
 (not only a Java runtime/JRE) and Maven 3.8+ on its `PATH`. Set `JAVA_HOME` to
 the JDK installation and include its `bin` directory on `PATH`, so both
 `java` and `javac` are available. The pipeline checks for `javac` and Java 17

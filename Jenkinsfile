@@ -33,13 +33,57 @@ pipeline {
                 }
             }
         }
-        stage('Build and test') {
+        stage('Clean') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn -B clean verify'
+                        sh 'mvn -B clean'
                     } else {
-                        bat 'mvn -B clean verify'
+                        bat 'mvn -B clean'
+                    }
+                }
+            }
+        }
+        stage('Compile') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -B compile'
+                    } else {
+                        bat 'mvn -B compile'
+                    }
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -B test'
+                    } else {
+                        bat 'mvn -B test'
+                    }
+                }
+            }
+        }
+        stage('Package') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -B package'
+                    } else {
+                        bat 'mvn -B package'
+                    }
+                }
+            }
+        }
+        stage('Verify') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -B verify'
+                    } else {
+                        bat 'mvn -B verify'
                     }
                 }
             }
