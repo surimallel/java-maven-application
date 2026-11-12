@@ -90,14 +90,12 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                script {
                     withSonarQubeEnv() {
                         if (isUnix()) {
                             sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sonar-first-project -Dsonar.projectName='sonar-first-project'"
                         } else {
                             bat "\"${mvn}\\bin\\mvn.cmd\" clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sonar-first-project -Dsonar.projectName='sonar-first-project'"
                         }
-                    }
                 }
             }
         }
