@@ -91,7 +91,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def mvn = tool 'Default Maven'
                     withSonarQubeEnv() {
                         if (isUnix()) {
                             sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sonar-first-project -Dsonar.projectName='sonar-first-project'"
