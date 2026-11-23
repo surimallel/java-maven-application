@@ -92,11 +92,11 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'docker build -t student-grade-suresh:${BUILD_NUMBER} -t student-grade-suresh:latest .'
-                        sh 'docker images student-grade-suresh'
+                        sh 'docker build -f Dockerfile.calculator -t calculator-app:${BUILD_NUMBER} -t calculator-app:latest .'
+                        sh 'docker images calculator-app'
                     } else {
-                        bat 'docker build -t student-grade-suresh:%BUILD_NUMBER% -t student-grade-suresh:latest .'
-                        bat 'docker images student-grade-suresh'
+                        bat 'docker build -f Dockerfile.calculator -t calculator-app:%BUILD_NUMBER% -t calculator-app:latest .'
+                        bat 'docker images calculator-app'
                     }
                 }
             }
@@ -105,11 +105,11 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'docker rm -f student-grade-suresh || true'
-                        sh 'docker run -d -p 8091:8091 --name student-grade-suresh student-grade-suresh:latest'
+                        sh 'docker rm -f calculator-app || true'
+                        sh 'docker run -d -p 8093:80 --name calculator-app calculator-app:latest'
                     } else {
-                        bat 'docker rm -f student-grade-suresh || exit /b 0'
-                        bat 'docker run -d -p 8091:8091 --name student-grade-suresh student-grade-suresh:latest'
+                        bat 'docker rm -f calculator-app || exit /b 0'
+                        bat 'docker run -d -p 8093:80 --name calculator-app calculator-app:latest'
                     }
                 }
             }

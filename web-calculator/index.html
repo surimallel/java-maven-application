@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --panel: #1f2937;
+      --display: #111827;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --key: #374151;
+      --key-hover: #4b5563;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: linear-gradient(135deg, #e5e7eb, #cbd5e1);
+    }
+    .calculator {
+      width: min(360px, calc(100vw - 2rem));
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    }
+    .display {
+      background: var(--display);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      text-align: right;
+      margin-bottom: 1rem;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      word-break: break-all;
+    }
+    .expression {
+      color: var(--muted);
+      font-size: 0.95rem;
+      min-height: 1.2em;
+    }
+    .result {
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 0.9rem;
+      font-size: 1.1rem;
+      color: var(--text);
+      background: var(--key);
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+    button:hover { background: var(--key-hover); }
+    button:active { transform: translateY(1px); }
+    .operator { background: #4b5563; }
+    .equals { background: var(--accent); grid-column: span 2; }
+    .equals:hover { background: var(--accent-hover); }
+    .clear { background: var(--danger); }
+    .clear:hover { background: #b91c1c; }
+    .zero { grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <main class="calculator" aria-label="Calculator">
+    <div class="display">
+      <div id="expression" class="expression"></div>
+      <div id="result" class="result">0</div>
+    </div>
+    <div class="keys">
+      <button class="clear" data-action="clear">C</button>
+      <button data-action="delete">DEL</button>
+      <button class="operator" data-value="/">÷</button>
+      <button class="operator" data-value="*">×</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button class="operator" data-value="-">−</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button class="operator" data-value="+">+</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button class="equals" data-action="equals">=</button>
+
+      <button class="zero" data-value="0">0</button>
+      <button data-value=".">.</button>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const expressionEl = document.getElementById('expression');
+      const resultEl = document.getElementById('result');
+      let expression = '';
+
+      function updateDisplay(value) {
+        expressionEl.textContent = expression;
+        resultEl.textContent = value;
+      }
+
+      function appendValue(value) {
+        if (value === '.') {
+          const parts = expression.split(/[\+\-\*\/]/);
+          const current = parts[parts.length - 1];
+          if (current.includes('.')) return;
+          if (current === '') expression += '0';
+        }
+
+        if (/[\+\-\*\/]/.test(value)) {
+          if (expression === '' && value !== '-') return;
+          if (/[\+\-\*\/]$/.test(expression)) {
+            expression = expression.slice(0, -1) + value;
+            updateDisplay(resultEl.textContent);
+            return;
+          }
+        }
+
+        expression += value;
+        updateDisplay(expression || '0');
+      }
+
+      function clearAll() {
+        expression = '';
+        updateDisplay('0');
+      }
+
+      function deleteLast() {
+        expression = expression.slice(0, -1);
+        updateDisplay(expression || '0');
+      }
+
+      function calculate() {
+        if (!expression || /[\+\-\*\/.]$/.test(expression)) return;
+        try {
+          const sanitized = expression.replace(/[^0-9+\-*/.]/g, '');
+          const result = Function('"use strict"; return (' + sanitized + ')')();
+          if (!Number.isFinite(result)) {
+            updateDisplay('Error');
+            expression = '';
+            return;
+          }
+          const formatted = Number.parseFloat(result.toFixed(10)).toString();
+          expressionEl.textContent = sanitized + ' =';
+          resultEl.textContent = formatted;
+          expression = formatted;
+        } catch (e) {
+          updateDisplay('Error');
+          expression = '';
+        }
+      }
+
+      document.querySelector('.keys').addEventListener('click', function (event) {
+        const button = event.target.closest('button');
+        if (!button) return;
+
+        const action = button.getAttribute('data-action');
+        const value = button.getAttribute('data-value');
+
+        if (action === 'clear') return clearAll();
+        if (action === 'delete') return deleteLast();
+        if (action === 'equals') return calculate();
+        if (value) appendValue(value);
+      });
+
+      document.addEventListener('keydown', function (event) {
+        const key = event.key;
+        if ((key >= '0' && key <= '9') || ['+', '-', '*', '/', '.'].includes(key)) {
+          appendValue(key);
+        } else if (key === 'Enter' || key === '=') {
+          event.preventDefault();
+          calculate();
+        } else if (key === 'Backspace') {
+          deleteLast();
+        } else if (key === 'Escape') {
+          clearAll();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

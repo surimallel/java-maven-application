@@ -45,3 +45,19 @@ a **full JDK 17 or newer**
 the JDK installation and include its `bin` directory on `PATH`, so both
 `java` and `javac` are available. The pipeline checks for `javac` and Java 17
 release support before building and reports a setup error if either is missing.
+
+The pipeline also builds and runs a browser-based calculator application served
+by Nginx. The Docker image is built from `Dockerfile.calculator` and the
+container is started on host port `8093`.
+
+## Web calculator
+
+A simple calculator web application is available in `web-calculator/index.html`
+and is served by Nginx when built with `Dockerfile.calculator`.
+
+```shell
+docker build -f Dockerfile.calculator -t calculator-app:latest .
+docker run -d -p 8093:80 --name calculator-app calculator-app:latest
+```
+
+Open `http://localhost:8093` in a web browser to use the calculator.
