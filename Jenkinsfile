@@ -14,109 +14,51 @@ pipeline {
         }
         stage('Check Java') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh '''
-                            if ! command -v javac >/dev/null 2>&1; then
-                                echo "ERROR: javac is missing. Install a full JDK 17+ on this Jenkins agent and add its bin directory to PATH." >&2
-                                exit 1
-                            fi
-                            java -version
-                            javac --release 17 -version
-                        '''
-                    } else {
-                        bat '''
-                            @where javac >nul 2>nul
-                            @if errorlevel 1 (
-                                echo ERROR: javac is missing. Install a full JDK 17+ on this Jenkins agent and add its bin directory to PATH. 1>&2
-                                exit /b 1
-                            )
-                            @java -version
-                            @javac --release 17 -version
-                        '''
-                    }
-                }
+                sh '''
+                    if ! command -v javac >/dev/null 2>&1; then
+                        echo "ERROR: javac is missing. Install a full JDK 17+ on this Jenkins agent and add its bin directory to PATH." >&2
+                        exit 1
+                    fi
+                    java -version
+                    javac --release 17 -version
+                '''
             }
         }
         stage('Clean') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B clean'
-                    } else {
-                        bat 'mvn -B clean'
-                    }
-                }
+                sh 'mvn -B clean'
             }
         }
         stage('Compile') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B compile'
-                    } else {
-                        bat 'mvn -B compile'
-                    }
-                }
+                sh 'mvn -B compile'
             }
         }
         stage('Test') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B test'
-                    } else {
-                        bat 'mvn -B test'
-                    }
-                }
+                sh 'mvn -B test'
             }
         }
         stage('Package') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B package'
-                    } else {
-                        bat 'mvn -B package'
-                    }
-                }
+                sh 'mvn -B package'
             }
         }
         stage('Verify') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B verify'
-                    } else {
-                        bat 'mvn -B verify'
-                    }
-                }
+                sh 'mvn -B verify'
             }
         }
         stage('Docker Build') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker build -f Dockerfile.calculator -t calculator-app:${BUILD_NUMBER} -t calculator-app:latest .'
-                        sh 'docker images calculator-app'
-                    } else {
-                        bat 'docker build -f Dockerfile.calculator -t calculator-app:%BUILD_NUMBER% -t calculator-app:latest .'
-                        bat 'docker images calculator-app'
-                    }
-                }
+                sh 'docker build -f Dockerfile.calculator -t calculator-app:${BUILD_NUMBER} -t calculator-app:latest .'
+                sh 'docker images calculator-app'
             }
         }
         stage('Run Docker Container') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker rm -f calculator-app || true'
-                        sh 'docker run -d -p 8093:80 --name calculator-app calculator-app:latest'
-                    } else {
-                        bat 'docker rm -f calculator-app || exit /b 0'
-                        bat 'docker run -d -p 8093:80 --name calculator-app calculator-app:latest'
-                    }
-                }
+                sh 'docker rm -f calculator-app || true'
+                sh 'docker run -d -p 8093:80 --name calculator-app calculator-app:latest'
             }
         }
         /*
@@ -141,13 +83,7 @@ pipeline {
         */
         stage('Run sample application') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn -B exec:java'
-                    } else {
-                        bat 'mvn -B exec:java'
-                    }
-                }
+                sh 'mvn -B exec:java'
             }
         }
     }
