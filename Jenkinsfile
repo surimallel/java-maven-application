@@ -1,9 +1,14 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout()
+    }
+
     stages {
         stage('Checkout') {
             steps {
+                deleteDir()
                 checkout scm
             }
         }
