@@ -105,9 +105,11 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'docker run --rm -p 8091:8091 student-grade-suresh:latest'
+                        sh 'docker rm -f student-grade-suresh || true'
+                        sh 'docker run -d -p 8091:8091 --name student-grade-suresh student-grade-suresh:latest'
                     } else {
-                        bat 'docker run --rm -p 8091:8091 student-grade-suresh:latest'
+                        bat 'docker rm -f student-grade-suresh || exit /b 0'
+                        bat 'docker run -d -p 8091:8091 --name student-grade-suresh student-grade-suresh:latest'
                     }
                 }
             }
