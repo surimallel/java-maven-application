@@ -88,6 +88,19 @@ pipeline {
                 }
             }
         }
+        stage('Docker Build') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'docker build -t student-grade-suresh:${BUILD_NUMBER} -t student-grade-suresh:latest .'
+                        sh 'docker images student-grade-suresh'
+                    } else {
+                        bat 'docker build -t student-grade-suresh:%BUILD_NUMBER% -t student-grade-suresh:latest .'
+                        bat 'docker images student-grade-suresh'
+                    }
+                }
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
                     withSonarQubeEnv('SonarQube') {
