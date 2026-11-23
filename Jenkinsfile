@@ -101,6 +101,18 @@ pipeline {
                 }
             }
         }
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'docker run --rm -p 8091:8091 student-grade-suresh:latest'
+                    } else {
+                        bat 'docker run --rm -p 8091:8091 student-grade-suresh:latest'
+                    }
+                }
+            }
+        }
+        /*
         stage('SonarQube Analysis') {
             steps {
                     withSonarQubeEnv('SonarQube') {
@@ -119,6 +131,7 @@ pipeline {
                 }
             }
         }
+        */
         stage('Run sample application') {
             steps {
                 script {
