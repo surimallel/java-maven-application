@@ -62,4 +62,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>artifactory-student-9</id>
+            <name>Artifactory student-9</name>
+            <url>https://dwdops.jfrog.io/artifactory/student-9/</url>
+        </repository>
+        <snapshotRepository>
+            <id>artifactory-student-9</id>
+            <name>Artifactory student-9 snapshots</name>
+            <url>https://dwdops.jfrog.io/artifactory/student-9/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
