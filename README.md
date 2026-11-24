@@ -35,20 +35,13 @@ C (70+), D (60+), and F (below 60).
 
 ## Jenkins
 
-The root `Jenkinsfile` runs Maven's `clean`, `compile`, `test`, `package`, and
-`verify` goals in separate stages, publishes the Surefire JUnit test reports,
-then runs the sample application so its student report appears in the Jenkins
-job's **Console Output**. Maven lifecycle goals include all earlier phases, so
-the later stages repeat some earlier build work. Ensure the Jenkins agent has
-a **full JDK 17 or newer**
-(not only a Java runtime/JRE) and Maven 3.8+ on its `PATH`. Set `JAVA_HOME` to
-the JDK installation and include its `bin` directory on `PATH`, so both
-`java` and `javac` are available. The pipeline checks for `javac` and Java 17
-release support before building and reports a setup error if either is missing.
-
-The pipeline also builds and runs a browser-based calculator application served
-by Nginx. The Docker image is built from `Dockerfile.calculator` and the
-container is started on host port `8093`.
+The root [Jenkinsfile](Jenkinsfile) checks out the repository, removes all
+existing Docker containers and images on the agent, then builds the calculator
+container image from [Dockerfile.calculator](Dockerfile.calculator) as
+`calculator-app:${BUILD_NUMBER}` and `calculator-app:latest`. Ensure the Jenkins
+agent has Docker available on its `PATH`. This cleanup removes all containers
+and images on the agent, so use a dedicated agent if other Docker workloads must
+be preserved.
 
 ## Web calculator
 
