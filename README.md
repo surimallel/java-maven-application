@@ -35,13 +35,14 @@ C (70+), D (60+), and F (below 60).
 
 ## Jenkins
 
-The root [Jenkinsfile](Jenkinsfile) checks out the repository, removes all
-existing Docker containers and images on the agent, builds the calculator
-container image from [Dockerfile.calculator](Dockerfile.calculator) as
-`calculator-app:${BUILD_NUMBER}`, then runs it as `calculator-app` on host port
-`8094`. Ensure the Jenkins agent has Docker available on its `PATH`. This
-cleanup removes all containers and images on the agent, so use a dedicated agent
-if other Docker workloads must be preserved.
+The root [Jenkinsfile](Jenkinsfile) checks out the repository, then builds and
+uploads the Maven artifact to JFrog Artifactory with `mvn -B clean deploy` using
+the `distributionManagement` configuration in [pom.xml](pom.xml). The pipeline
+expects a Jenkins "Username with password" credential with ID
+`artifactory-student-9` (matching the server ID in `pom.xml`) and generates a
+temporary Maven `settings.xml` during the deploy step. Ensure the Jenkins agent
+has a JDK 17+ and Maven 3.8+ on its `PATH`. Surefire test reports from
+`target/surefire-reports/*.xml` are published when available.
 
 ## Web calculator
 
