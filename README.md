@@ -36,12 +36,12 @@ C (70+), D (60+), and F (below 60).
 ## Jenkins
 
 The root [Jenkinsfile](Jenkinsfile) checks out the repository, removes all
-existing Docker containers and images on the agent, then builds the calculator
+existing Docker containers and images on the agent, builds the calculator
 container image from [Dockerfile.calculator](Dockerfile.calculator) as
-`calculator-app:${BUILD_NUMBER}` and `calculator-app:latest`. Ensure the Jenkins
-agent has Docker available on its `PATH`. This cleanup removes all containers
-and images on the agent, so use a dedicated agent if other Docker workloads must
-be preserved.
+`calculator-app:${BUILD_NUMBER}`, then runs it as `calculator-app` on host port
+`8094`. Ensure the Jenkins agent has Docker available on its `PATH`. This
+cleanup removes all containers and images on the agent, so use a dedicated agent
+if other Docker workloads must be preserved.
 
 ## Web calculator
 
@@ -49,8 +49,10 @@ A simple calculator web application is available in `web-calculator/index.html`
 and is served by Nginx when built with `Dockerfile.calculator`.
 
 ```shell
-docker build -f Dockerfile.calculator -t calculator-app:latest .
-docker run -d -p 8093:80 --name calculator-app calculator-app:latest
+docker build -f Dockerfile.calculator -t calculator-app:1 .
+docker run -d -p 8094:80 --name calculator-app calculator-app:1
 ```
 
-Open `http://localhost:8093` in a web browser to use the calculator.
+Open `http://localhost:8094` in a web browser to use the calculator. When using
+the Jenkins pipeline, the image is tagged with the Jenkins build number instead
+of `1`.

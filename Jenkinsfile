@@ -29,8 +29,14 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -f Dockerfile.calculator -t calculator-app:${BUILD_NUMBER} -t calculator-app:latest .'
+                sh 'docker build -f Dockerfile.calculator -t calculator-app:${BUILD_NUMBER} .'
                 sh 'docker images calculator-app'
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker run -d -p 8094:80 --name calculator-app calculator-app:${BUILD_NUMBER}'
+                sh 'docker ps --filter name=calculator-app'
             }
         }
     }
